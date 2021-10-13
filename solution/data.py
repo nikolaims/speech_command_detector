@@ -3,12 +3,14 @@ import os
 import numpy as np
 import soundfile
 
+from torch.utils.data import Dataset
+
 DATASET_PATH = r'/Users/kolai/Data/speech_commands_v0.01/'
 
 SAMPLING_RATE = 16000
 SAMPLES_DURATION_SEC = 1
 
-DIGIT_SUBSETS = {'TRAIN': 0, 'VALID': 1, 'TEST': 2}
+DIGIT_SUBSETS = {'train': 0, 'valid': 1, 'test': 2}
 DIGIT_LABELS = {'TARGET': 1, 'NON_TARGET': -1, 'BACKGROUND_NOISE': 0}
 
 TARGET_LABEL = 'stop'
@@ -73,15 +75,34 @@ def prepare_ref_dataset_csv(name, n_samples, target_ratio=0.20, non_target_ratio
     n_samples = len(ref_df)
     n_train_samples = int(n_samples * (1 - valid_ratio - test_ratio))
     n_valid_samples = int(n_samples * valid_ratio)
-    ref_df['subset'] = DIGIT_SUBSETS['TRAIN']
-    ref_df.loc[n_train_samples:, 'subset'] = DIGIT_SUBSETS['VALID']
-    ref_df.loc[n_train_samples + n_valid_samples:, 'subset'] = DIGIT_SUBSETS['TEST']
+    ref_df['subset'] = DIGIT_SUBSETS['train']
+    ref_df.loc[n_train_samples:, 'subset'] = DIGIT_SUBSETS['valid']
+    ref_df.loc[n_train_samples + n_valid_samples:, 'subset'] = DIGIT_SUBSETS['test']
 
     csv_path = os.path.join(DATASET_PATH, f'ref_{name}_{n_samples}.csv')
     ref_df.to_csv(csv_path, index=False)
     return csv_path
 
+class SCDataset(Dataset):
+    def __init__(self, ref_dataset_csv_path, subset='train'):
+        self.ref_df = pd.read_csv(ref_dataset_csv_path).query(f'subset=={DIGIT_SUBSETS[subset]}')
+
+    def __getitem__(self, n):
+        sample_ref = self.ref_df.iloc[n]
+        file_path = os.path.join(DATASET_PATH, sample_ref['path'])
+        if sample_ref['label'] == DIGIT_LABELS['BACKGROUND_NOISE']:
+            x, _sr = soundfile.read(file_path, start=sample_ref['start'], stop=sample_ref['stop'])
+        else:
+            x, _sr = soundfile.read(file_path)
+
+        return x, sample_ref['label']
+
+    def __len__(self):
+        return len(self.ref_df)
 
 if __name__ == '__main__':
-    csv_path = prepare_ref_dataset_csv('small', 1000)
-    print(csv_path)
+    # csv_path = prepare_ref_dataset_csv('small', 1000)
+    # print(csv_path)
+    dataset = SCDataset('/Users/kolai/Data/speech_commands_v0.01/ref_small_1000.csv')
+    from solution.utils import play
+    play(dataset[0][0])
