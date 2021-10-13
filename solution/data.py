@@ -9,6 +9,7 @@ DATASET_PATH = r'/Users/kolai/Data/speech_commands_v0.01/'
 
 SAMPLING_RATE = 16000
 SAMPLES_DURATION_SEC = 1
+SAMPLES_LEN = int(SAMPLING_RATE*SAMPLES_DURATION_SEC)
 
 DIGIT_SUBSETS = {'train': 0, 'valid': 1, 'test': 2}
 DIGIT_LABELS = {'TARGET': 1, 'NON_TARGET': -1, 'BACKGROUND_NOISE': 0}
@@ -83,6 +84,7 @@ def prepare_ref_dataset_csv(name, n_samples, target_ratio=0.20, non_target_ratio
     ref_df.to_csv(csv_path, index=False)
     return csv_path
 
+
 class SCDataset(Dataset):
     def __init__(self, ref_dataset_csv_path, subset='train'):
         self.ref_df = pd.read_csv(ref_dataset_csv_path).query(f'subset=={DIGIT_SUBSETS[subset]}')
@@ -94,15 +96,17 @@ class SCDataset(Dataset):
             x, _sr = soundfile.read(file_path, start=sample_ref['start'], stop=sample_ref['stop'])
         else:
             x, _sr = soundfile.read(file_path)
-
+            if len(x) < SAMPLES_LEN:
+                x = np.concatenate([x, np.zeros(SAMPLES_LEN-len(x))])
         return x, sample_ref['label']
 
     def __len__(self):
         return len(self.ref_df)
 
+
 if __name__ == '__main__':
     # csv_path = prepare_ref_dataset_csv('small', 1000)
     # print(csv_path)
-    dataset = SCDataset('/Users/kolai/Data/speech_commands_v0.01/ref_small_1000.csv')
+    dataset = SCDataset('/Users/kolai/Data/speech_commands_v0.01/ref_small_1000.csv', 'train')
     from solution.utils import play
     play(dataset[0][0])
