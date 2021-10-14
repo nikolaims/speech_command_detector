@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import numpy as np
 import soundfile
+import torch
 
 from torch.utils.data import Dataset
 
@@ -86,8 +87,9 @@ def prepare_ref_dataset_csv(name, n_samples, target_ratio=0.20, non_target_ratio
 
 
 class SCDataset(Dataset):
-    def __init__(self, ref_dataset_csv_path, subset='train'):
+    def __init__(self, ref_dataset_csv_path, subset='train', transform=None):
         self.ref_df = pd.read_csv(ref_dataset_csv_path).query(f'subset=={DIGIT_SUBSETS[subset]}')
+        self.transform = transform
 
     def __getitem__(self, n):
         sample_ref = self.ref_df.iloc[n]
@@ -98,6 +100,8 @@ class SCDataset(Dataset):
             x, _sr = soundfile.read(file_path)
             if len(x) < SAMPLES_LEN:
                 x = np.concatenate([x, np.zeros(SAMPLES_LEN-len(x))])
+        if self.transform:
+            x = self.transform(x)
         return x, sample_ref['label']
 
     def __len__(self):
@@ -105,8 +109,19 @@ class SCDataset(Dataset):
 
 
 if __name__ == '__main__':
+    # # prepare dataset
     # csv_path = prepare_ref_dataset_csv('small', 1000)
     # print(csv_path)
+
+    # # load as numpy array
     dataset = SCDataset('/Users/kolai/Data/speech_commands_v0.01/ref_small_1000.csv', 'train')
     from solution.utils import play
     play(dataset[0][0])
+
+    # # load and transform
+    from torchvision.transforms import Compose
+    from solution.preprocessing import Spectrogram, NormalizeSpec, ToTensor
+    transform = Compose([Spectrogram(), NormalizeSpec(), ToTensor()])
+    dataset = SCDataset('/Users/kolai/Data/speech_commands_v0.01/ref_small_1000.csv', 'train', transform=transform)
+    print(dataset[0])
+    print(dataset[0][0].shape)
