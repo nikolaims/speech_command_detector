@@ -3,6 +3,7 @@ import torch
 
 from scipy import signal
 from solution.data import SCDataset, SAMPLING_RATE, SAMPLES_LEN
+from torchvision.transforms import Compose
 
 
 
@@ -33,10 +34,14 @@ class ToTensor:
         return torch.from_numpy(spec).to(torch.float).unsqueeze(0)
 
 
+class MainTransform(Compose):
+    def __init__(self):
+        super().__init__([Spectrogram(), NormalizeSpec(), ToTensor()])
+
 if __name__ == '__main__':
     import pylab as plt
 
-    from torchvision.transforms import Compose
+
     from solution.utils import play
 
     dataset = SCDataset(r'/Users/kolai/Data/speech_commands_v0.01/ref_small_1000.csv')
