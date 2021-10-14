@@ -34,6 +34,11 @@ class ToTensor:
         return torch.from_numpy(spec).to(torch.float).unsqueeze(0)
 
 
+class NumberToTensor:
+    def __call__(self, number):
+        return torch.tensor(number).to(torch.float).unsqueeze(0)
+
+
 class MainTransform(Compose):
     def __init__(self):
         super().__init__([Spectrogram(), NormalizeSpec(), ToTensor()])
