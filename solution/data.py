@@ -6,7 +6,7 @@ import torch
 
 from torch.utils.data import Dataset
 
-DATASET_PATH = r'/Users/kolai/Data/speech_commands_v0.01/'
+DATASET_PATH = r'/Users/kolai/Data/speech_commands_v0.02/'
 
 SAMPLING_RATE = 16000
 SAMPLES_DURATION_SEC = 1
@@ -114,19 +114,19 @@ class SCDataset(Dataset):
 
 
 if __name__ == '__main__':
-    # # prepare dataset
-    # csv_path = prepare_ref_dataset_csv('small', 1000)
-    # print(csv_path)
+    # prepare dataset
+    csv_path = prepare_ref_dataset_csv('sc_v2', 17000)
+    print(csv_path)
 
     # # load as numpy array
-    dataset = SCDataset('/Users/kolai/Data/speech_commands_v0.01/ref_small_1000.csv', 'train')
-    from solution.utils import play
-    play(dataset[0][0])
-
-    # # load and transform
-    from torchvision.transforms import Compose
-    from solution.preprocessing import Spectrogram, NormalizeSpec, ToTensor
-    transform = Compose([Spectrogram(), NormalizeSpec(), ToTensor()])
-    dataset = SCDataset('/Users/kolai/Data/speech_commands_v0.01/ref_small_1000.csv', 'train', transform=transform)
-    print(dataset[0])
-    print(dataset[0][0].shape)
+    # dataset = SCDataset('/Users/kolai/Data/speech_commands_v0.01/ref_small_1000.csv', 'train')
+    # from solution.utils import play
+    # play(dataset[0][0])
+    #
+    # # # load and transform
+    # from torchvision.transforms import Compose
+    # from solution.preprocessing import Spectrogram, NormalizeSpec, ToTensor
+    # transform = Compose([Spectrogram(), NormalizeSpec(), ToTensor()])
+    # dataset = SCDataset('/Users/kolai/Data/speech_commands_v0.01/ref_small_1000.csv', 'train', transform=transform)
+    # print(dataset[0])
+    # print(dataset[0][0].shape)
