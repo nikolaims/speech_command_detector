@@ -5,6 +5,7 @@ import sounddevice
 import soundfile
 
 from solution.data import SAMPLING_RATE
+from solution.mic_rt import realtime_mic_spotting
 
 
 def plot_offline(x, p, title):
@@ -49,11 +50,12 @@ def mic_input_handle(args):
         plot_offline(x, p, f'recording {args.record}s')
     else:
         print('*** REALTIME SPOTTING')
+        realtime_mic_spotting()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
-    subparsers = parser.add_subparsers(required=True , title='Input type')
+    subparsers = parser.add_subparsers(required=True, title='Input type')
 
     parser_file = subparsers.add_parser('file', help='audio file', description='open audio file and spot the phrase')
     parser_file.add_argument('path', help='audio file path to open and spot the phrase')
