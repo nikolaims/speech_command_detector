@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 from solution.preprocessing import MainTransform
 from solution.data import SAMPLING_RATE, SAMPLES_LEN
@@ -38,7 +39,7 @@ class InferModel:
 
 if __name__ == '__main__':
     from solution.model import ConvNet
-    import numpy as np
+
 
     model_name = 'small_1000'
     model_state_path = f'results/{model_name}.pt'
