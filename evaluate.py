@@ -6,7 +6,7 @@ from solution.learning import prepare_loaders, validate, run_epoch
 from solution.preprocessing import MainTransform, NumberToTensor
 
 
-train_loader, val_loader, test_loader = prepare_loaders('/Users/kolai/Data/speech_commands_v0.01/ref_full_10000.csv',
+train_loader, val_loader, test_loader = prepare_loaders('ref_datasets/ref_sc_v2_17000.csv',
                                                         MainTransform(), NumberToTensor())
 
 model_name = 'main_model'
