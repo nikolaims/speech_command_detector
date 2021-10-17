@@ -42,8 +42,8 @@ class InferModel:
 
 def spot_the_phrase(x):
     from solution.model import ConvNet
-    model_name = 'small_1000'
-    model_state_path = f'results/{model_name}.pt'
+    model_name = 'main_model'
+    model_state_path = f'model_states/{model_name}.pt'
     infer_model = InferModel(ConvNet, model_state_path, out_format='proba')
     p = infer_model.continuous(x, hop_ms=100)
     return p
@@ -51,9 +51,8 @@ def spot_the_phrase(x):
 if __name__ == '__main__':
     from solution.model import ConvNet
 
-
-    model_name = 'small_1000'
-    model_state_path = f'results/{model_name}.pt'
+    model_name = 'main_model'
+    model_state_path = f'model_states/{model_name}.pt'
     infer_model = InferModel(ConvNet, model_state_path, out_format='proba')
 
     print(infer_model(np.random.randn(SAMPLES_LEN)))

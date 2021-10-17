@@ -9,9 +9,9 @@ from solution.preprocessing import MainTransform, NumberToTensor
 train_loader, val_loader, test_loader = prepare_loaders('/Users/kolai/Data/speech_commands_v0.01/ref_full_10000.csv',
                                                         MainTransform(), NumberToTensor())
 
-model_name = 'small_1000'
+model_name = 'main_model'
 model = ConvNet()
-model.load_state_dict(torch.load(f'results/{model_name}.pt'))
+model.load_state_dict(torch.load(f'model_states/{model_name}.pt'))
 
 
 labels = []

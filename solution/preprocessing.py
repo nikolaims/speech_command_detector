@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     from solution.utils import play
 
-    dataset = SCDataset(r'/Users/kolai/Data/speech_commands_v0.01/ref_small_1000.csv')
+    dataset = SCDataset(r'ref_datasets/ref_sc_v2_17000.csv')
 
     n = 9
     waveform, label = dataset[n]

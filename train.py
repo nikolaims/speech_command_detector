@@ -7,7 +7,7 @@ from solution.learning import prepare_loaders, validate, run_epoch
 from solution.preprocessing import MainTransform, NumberToTensor
 
 
-ref_dataset = '/Users/kolai/Data/speech_commands_v0.02/ref_sc_v2_17000.csv'
+ref_dataset = 'ref_datasets/ref_sc_v2_17000.csv'
 model_name = 'convnet_17000'
 
 model = ConvNet()
@@ -44,7 +44,7 @@ print(f'TEST VALIDATION: '
       f'acc  {val_score.mean():.5f}+-{val_score.std():.5f}')
 
 
-torch.save(model.state_dict(), f'results/{model_name}.pt')
+torch.save(model.state_dict(), f'model_states/{model_name}.pt')
 
 
 

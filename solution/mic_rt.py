@@ -18,8 +18,8 @@ def realtime_mic_spotting(hop_ms=100, fig_upd_interval=30, length_sec=3):
 
     from solution.model import ConvNet
     from solution.infer import InferModel
-    model_name = 'small_1000'
-    model_state_path = f'results/{model_name}.pt'
+    model_name = 'main_model'
+    model_state_path = f'model_states/{model_name}.pt'
     infer_model = InferModel(ConvNet, model_state_path, out_format='proba')
 
     def audio_callback(indata, frames, time, status):
@@ -61,7 +61,7 @@ def realtime_mic_spotting(hop_ms=100, fig_upd_interval=30, length_sec=3):
             weights[-SAMPLES_LEN:] += window.copy()
             proba[-SAMPLES_LEN:] += window.copy()*p
 
-        proba_line.set_ydata((proba / weights >= 0.5) * 1.)
+        proba_line.set_ydata((proba / (weights + 1e-9) >= 0.5) * 1.)
         proba_line2.set_ydata(-proba_line.get_ydata())
         return audio_line, proba_line, proba_line2
 

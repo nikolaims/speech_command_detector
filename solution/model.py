@@ -20,7 +20,7 @@ class ConvNet(nn.Module):
 if __name__ == '__main__':
     from solution.data import SCDataset
     from solution.preprocessing import MainTransform, NumberToTensor
-    data = SCDataset('/Users/kolai/Data/speech_commands_v0.01/ref_small_1000.csv',
+    data = SCDataset('ref_datasets/ref_sc_v2_17000.csv',
                      transform=MainTransform(), transform_label=NumberToTensor())
     waveform, label = data[0]
 
