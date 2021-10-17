@@ -1,19 +1,14 @@
 import argparse
 
-import sounddevice
-import soundfile
-
-from solution.data import SAMPLING_RATE
 from solution.mic_rt import realtime_mic_spotting
 from solution.viz import plot_offline
 from solution.infer import spot_the_phrase
+from solution.utils import load_audio_and_resample, rec
 
 
 def file_input_handle(args):
     print(args.path, '*** FILE SPOTTING')
-    x, fs = soundfile.read(args.path)
-    assert fs == SAMPLING_RATE, f'Sample rate should be {SAMPLING_RATE}'
-
+    x = load_audio_and_resample(args.path)
     p = spot_the_phrase(x)
     plot_offline(x, p, args.path)
 
@@ -21,9 +16,7 @@ def file_input_handle(args):
 def mic_input_handle(args):
     if args.record:
         print(args.record, 'SEC RECORDING SPOTTING')
-        print('ON AIR ...')
-        x = sounddevice.rec(int(args.record * SAMPLING_RATE), samplerate=SAMPLING_RATE, channels=1, blocking=True)
-        print('DONE')
+        x = rec(seconds=args.record)
         p = spot_the_phrase(x)
         plot_offline(x, p, f'recording {args.record}s')
     else:
