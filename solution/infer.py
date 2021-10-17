@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+from scipy.signal.windows import tukey
 
 from solution.preprocessing import MainTransform
 from solution.data import SAMPLING_RATE, SAMPLES_LEN
@@ -28,14 +29,24 @@ class InferModel:
         return out
 
     def continuous(self, x, hop_ms):
+        window = tukey(SAMPLES_LEN, 0.75) ** 2
         predictions = np.zeros(len(x))
+        weights = np.zeros(len(x))
         hop = int(hop_ms / 1000 * SAMPLING_RATE)
-        n_predictions_per_time = (SAMPLES_LEN / hop)
         for start in range(0, len(x) - SAMPLES_LEN, hop):
             x_slice = x[start:start + SAMPLES_LEN]
-            predictions[start:start + SAMPLES_LEN] += self(x_slice)
-        return predictions / n_predictions_per_time
+            predictions[start:start + SAMPLES_LEN] += self(x_slice) * window
+            weights[start:start + SAMPLES_LEN] += window
+        return predictions / (weights + 1e-9)
 
+
+def spot_the_phrase(x):
+    from solution.model import ConvNet
+    model_name = 'small_1000'
+    model_state_path = f'results/{model_name}.pt'
+    infer_model = InferModel(ConvNet, model_state_path, out_format='proba')
+    p = infer_model.continuous(x, hop_ms=100)
+    return p
 
 if __name__ == '__main__':
     from solution.model import ConvNet

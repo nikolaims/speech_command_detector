@@ -1,34 +1,12 @@
 import argparse
 
-import numpy as np
 import sounddevice
 import soundfile
 
 from solution.data import SAMPLING_RATE
 from solution.mic_rt import realtime_mic_spotting
-
-
-def plot_offline(x, p, title):
-    import pylab as plt
-    t = np.arange(len(x))/SAMPLING_RATE
-    plt.plot(t, x, label='audio')
-    plt.fill_between(t, -np.abs(x).max() * (p >= 0.5), np.abs(x).max() * (p >= 0.5),
-                     alpha=0.5, color='C1', label='model selection')
-    plt.legend()
-    plt.xlabel('Time, s')
-    plt.ylabel('Amplitude')
-    plt.title(title)
-    plt.show()
-
-
-def spot_the_phrase(x):
-    from solution.model import ConvNet
-    from solution.infer import InferModel
-    model_name = 'small_1000'
-    model_state_path = f'results/{model_name}.pt'
-    infer_model = InferModel(ConvNet, model_state_path, out_format='proba')
-    p = infer_model.continuous(x, hop_ms=100)
-    return p
+from solution.viz import plot_offline
+from solution.infer import spot_the_phrase
 
 
 def file_input_handle(args):
