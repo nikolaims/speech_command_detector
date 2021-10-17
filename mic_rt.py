@@ -13,8 +13,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sounddevice as sd
 
+from scipy.signal.windows import triang
+
 from solution.data import SAMPLING_RATE, SAMPLES_LEN
 
+HOP = int(100 * SAMPLING_RATE / 1000)
 
 def int_or_str(text):
     """Helper function for argument parsing."""
@@ -51,7 +54,7 @@ def update_plot(frame):
     therefore the queue tends to contain multiple blocks of audio data.
 
     """
-    global waveform
+    global waveform, proba, weights
     total_shift = 0
     while True:
         try:
@@ -62,22 +65,48 @@ def update_plot(frame):
         total_shift += shift
         waveform = np.roll(waveform, -shift)
         waveform[-shift:] = data
-
     audio_line.set_ydata(waveform)
 
-    return audio_line,
+    proba = np.roll(proba, -total_shift)
+    proba[-total_shift:] = np.nan
+    weights = np.roll(weights, -total_shift)
+    weights[-total_shift:] = 0
+
+
+    if np.all(np.isnan(proba[-HOP:])):
+        p_ = proba[-SAMPLES_LEN:]
+        p_[np.isnan(p_)] = 0
+
+        dist = 1.*((triang(SAMPLES_LEN)-0.5)>0)
+
+        p = infer_model(waveform[-SAMPLES_LEN:])
+
+        weights[-SAMPLES_LEN:] += dist
+        proba[-SAMPLES_LEN:] += dist*p
+
+
+    # print(proba/weights)
+    proba_line.set_ydata(1*(proba/weights>=0.5))
+    proba_line2.set_ydata(-proba_line.get_ydata())
+
+
+    return audio_line, proba_line, proba_line2
 
 
 
 fig_upd_interval = 30
-length = int(1.5 * SAMPLING_RATE)
+length = int(3 * SAMPLING_RATE)
 waveform = np.zeros(length)
+proba = np.zeros(length)*np.nan
+weights = np.zeros(length)
 
 fig, ax = plt.subplots()
 audio_line,  = ax.plot(waveform)
+proba_line,  = ax.plot(proba, color='C1')
+proba_line2,  = ax.plot(-proba, color='C1')
 
 
-ax.axis((0, len(waveform), -1, 1))
+ax.axis((0, len(waveform), -1.1, 1.1))
 ax.set_yticks([0])
 ax.yaxis.grid(True)
 ax.tick_params(bottom=False, top=False, labelbottom=False,
