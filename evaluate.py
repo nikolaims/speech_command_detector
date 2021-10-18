@@ -51,7 +51,7 @@ presicion, recall, th = precision_recall_curve(test_labels, test_pred)
 
 th05_ind = np.argmin(np.abs(th-0.5))
 
-fig, axes = plt.subplots(1, 2)
+fig, axes = plt.subplots(1, 2, figsize=(8, 4))
 axes[0].plot(epochs, mcc_valid, 'o--', label='validation')
 axes[0].plot(epochs[-1], matthews_corrcoef(test_labels, np.round(test_pred)), 'o', label='test')
 axes[0].set_xlabel('Epoch')
