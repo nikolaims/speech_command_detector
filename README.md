@@ -83,6 +83,7 @@ train, validation и test в соотношении 60%, 20% и 20% соотве
 
 ### 2.3. Обучение
 В качестве loss-function использовалась Binary Cross Entropy. Скрипт реализующий обучение - 
+
 [`train.py`](https://github.com/nikolaims/siemens_test_task/blob/master/train.py). Обучение происходило эпохами по 
 160 батчей состоящих из 64 семпла. 
 
@@ -96,4 +97,53 @@ train, validation и test в соотношении 60%, 20% и 20% соотве
 
 ![alt text](images/learning_and_pr_curves.png)
 *Fig. 2. Learning (A) and precision-recall (B) curves*
+
+### 2.5 Скользящее окно
+Для применения модели к аудио длительности больше 1 секуды была применена техника скользящего окна. 
+Ответ модели был взвешен на каждом окне при помощи tukey window. Один временной отсчет в результате содержит несколько 
+взвешенных ответов, которые суммируются и делятся на сумму весов. 
+
+### 2.5. Ограничения модели
+Основные ограничения модели
+- определенный темп речи, два близко расположенных слова могут попасть в 
+одно окно что затруднит декодирование; 
+- один говорящий - модель не разделяет говорящих одновременно с одинаковой громкостью людей;
+- ошибки в очень тихих записях - необходимо добавить voice activity detector.
+
+## 3. Структура репозитория
+Методы, классы и константы реализованы в виде пакета `solution` и разбиты по модулям в зависимости от функциональности:
+* [`solution.data`](https://github.com/nikolaims/siemens_test_task/blob/master/solution/data.py) - работа с данными
+* [`solution.infer`](https://github.com/nikolaims/siemens_test_task/blob/master/solution/infer.py) - использование 
+  обученной модели как по отрезкам 1 секунда так и скользящим окном для длинной записи
+* [`solution.learning`](https://github.com/nikolaims/siemens_test_task/blob/master/solution/learning.py) - helpersы для обучения
+* [`solution.mic_rt`](https://github.com/nikolaims/siemens_test_task/blob/master/solution/mic_rt.py) - онлайн мониторинг сигнала микрофона, детектирование и отрисовка
+* [`solution.model`](https://github.com/nikolaims/siemens_test_task/blob/master/solution/model.py) - определение модели
+* [`solution.preprocessing`](https://github.com/nikolaims/siemens_test_task/blob/master/solution/preprocessing.py) - 
+  задает обработку семплов до входа модели включая переход в частотно-временное представление
+* [`solution.utils`](https://github.com/nikolaims/siemens_test_task/blob/master/solution/utils.py) - вспомогательные функции для работы с аудио
+* [`solution.viz`](https://github.com/nikolaims/siemens_test_task/blob/master/solution/viz.py) - вспомогательные функции для визуализации
+
+  Репозиторий содержит следующие скрипты:
+* [`app.py`](https://github.com/nikolaims/siemens_test_task/blob/master/app.py) - CLI приложения
+* [`evaluate.py`](https://github.com/nikolaims/siemens_test_task/blob/master/evaluate.py) - измерение качества моделей
+* [`train.py`](https://github.com/nikolaims/siemens_test_task/blob/master/train.py) - обучение модели
+
+Также репозиторий  включает следующие директории:
+* [`audio_samples`](https://github.com/nikolaims/siemens_test_task/blob/master/audio_samples) - примеры аудио
+* [`images`](https://github.com/nikolaims/siemens_test_task/blob/master/images) - визуализация результатов
+* [`model_states`](https://github.com/nikolaims/siemens_test_task/blob/master/model_states) - сохраненные параметры модели
+* [`ref_datasets`](https://github.com/nikolaims/siemens_test_task/blob/master/ref_datasets) - содержит csv таблицы с 
+  ссылками на семплы, а также их разделение на выборки
+  
+## 4. TODO 
+Время потраченное на работу и оформление ~ 30 часов. Далее работа может быть продолжена следующим образом:
+1. Оформить документацию пакета solution
+2. Оценка качества работы алгоритма со скользящим окном для потока аудио
+3. Добавление voice activity detector - нет необходимости производить декодирование если отсутствует речь
+4. Улучшение модели и сравнение с текущей
+
+
+
+
+  
 
