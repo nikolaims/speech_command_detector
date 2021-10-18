@@ -43,6 +43,17 @@
    python app.py mic
    ```
    
+### 1.3. Пример
+В качестве примера приведена команда для декодирования из файла 
+[`audio_samples/one_stop_three.wav`](https://github.com/nikolaims/siemens_test_task/blob/master/audio_samples/one_stop_three.wav)
+в котором последовательно произносятся слова ONE, STOP, TREE:
+    ```
+    python app.py file audio_samples/one_stop_three.wav
+    ```
+Результат приведен на рис 1.:
+![alt text](images/one_stop_tree.png)
+*Fig. 1. STOP spotting on one_stop_tree.wav*
+   
 ## 2. Методы
 ### 2.1. Данные
 Задача, которую предлагалась решать часто обозначается как keyword spotting problem. В качестве данных для обучения 
@@ -78,10 +89,11 @@ train, validation и test в соотношении 60%, 20% и 20% соотве
 ### 2.4. Качество
 Поскольку в задании не определен контекст задачи метрикой качества модели был выбран 
 [Matthews correlation coefficient](https://en.wikipedia.org/wiki/Matthews_correlation_coefficient)
- как метрику общего вида применяемой для бинарной классификации на несбалансированной выборке. На картинке 1A ниже 
-приведено качество модели после разного количества эпох на выборке valid и финальная метрика на test. На картинке 1B
+ как метрику общего вида применяемой для бинарной классификации на несбалансированной выборке. На картинке 2A ниже 
+приведено качество модели после разного количества эпох на выборке valid и финальная метрика на test. На картинке 2B
 представлена кривая precision-recall для финальной модели на тестовой выборке, в зависимосте от потребностей задачи 
 может быть выбран тот или иной порог ответа сети. 
 
 ![alt text](images/learning_and_pr_curves.png)
-*Fig. 1. Learning (A) and precision-recall (B) curves*
+*Fig. 2. Learning (A) and precision-recall (B) curves*
+
