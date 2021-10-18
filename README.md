@@ -16,6 +16,10 @@
     ```
     conda env create -f environment.yml
     ```
+1. Активировать среду 
+   ```
+   conda activate siemens_test_task
+   ```
 1. Установить пакет 
    [`solution`](https://github.com/nikolaims/siemens_test_task/blob/master/solution):
    ```
