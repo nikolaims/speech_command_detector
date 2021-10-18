@@ -50,10 +50,10 @@
 ### 1.3. Пример
 В качестве примера приведена команда для декодирования из файла 
 [`audio_samples/one_stop_three.wav`](https://github.com/nikolaims/siemens_test_task/blob/master/audio_samples/one_stop_three.wav)
-в котором последовательно произносятся слова ONE, STOP, TREE:
-    ```
-    python app.py file audio_samples/one_stop_three.wav
-    ```
+в котором последовательно произносятся слова ONE, STOP, TREE: 
+```
+python app.py file audio_samples/one_stop_three.wav
+```
 Результат приведен на рис 1.:
 ![alt text](images/one_stop_tree.png)
 *Fig. 1. STOP spotting on one_stop_tree.wav*
